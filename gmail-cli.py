@@ -19,7 +19,7 @@ def get_messages(query):
         credentials = json.load(cred_file)
     SCOPES = [
         'https://www.googleapis.com/auth/gmail.readonly',
-        'https://www.googleapis.com/auth/gmail.modify',
+        #'https://www.googleapis.com/auth/gmail.modify',
         ]
     creds = None
     token_file = os.path.join(home_folder, '.local', 'gmail-cli_token.pickle')
