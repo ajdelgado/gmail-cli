@@ -17,9 +17,12 @@ def get_messages(query):
     home_folder = os.environ.get('HOME', os.environ.get('USERPROFILE',''))
     with open(os.path.join(home_folder, '.local', 'client_secret_gmail.json'), 'r') as cred_file:
         credentials = json.load(cred_file)
-    SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
+    SCOPES = [
+        'https://www.googleapis.com/auth/gmail.readonly',
+        'https://www.googleapis.com/auth/gmail.modify',
+        ]
     creds = None
-    token_file = os.path.join(home_folder, '.local', 'token.pickle')
+    token_file = os.path.join(home_folder, '.local', 'gmail-cli_token.pickle')
     if os.path.exists(token_file):
         with open(token_file, 'rb') as token:
             creds = pickle.load(token)
@@ -39,6 +42,7 @@ def get_messages(query):
 
     #results = service.users().labels().list(userId='me').execute()
     results = service.users().messages().list(userId='me', q=query).execute()
+    output = list()
     for iter_message in results.get('messages', list()):
         gmessage = service.users().messages().get(userId='me', format='full', id=iter_message['id']).execute()
         message = dict()
@@ -50,7 +54,8 @@ def get_messages(query):
         for key in gmessage.keys():
             message[key] = gmessage[key]
         #print(f"({iter_message['id']}) {subject}")
-        print(json.dumps(message, indent=2))
+        output.append(message)
+    print(json.dumps(output, indent=2))
 
 if __name__ == '__main__':
     get_messages()
